@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -44,7 +44,8 @@
     </div>
     <div class="o-ui">
       <span class="o-help" id="help"><span class="o-help-d">Drag to spin · tap a tile to open</span><span class="o-help-m">Swipe to spin · tap a tile to open</span></span>
-      <button class="o-pause" id="pause" type="button" aria-pressed="false">Pause motion</button>
+      <span class="o-btns"><button class="o-pause o-snd" id="snd" type="button" aria-pressed="true">Sound on</button>
+      <button class="o-pause" id="pause" type="button" aria-pressed="false">Pause motion</button></span>
     </div>
   </section>
 
@@ -85,7 +86,8 @@
   <div class="det-in" id="detIn"></div>
 </div>
 
-<script src="data.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data.js?v=2"></script>
+<script src="fx.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

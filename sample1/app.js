@@ -14,6 +14,7 @@
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var FX = window.VFX || null; // sound + ribbon effects (fx.js); the site works without it
   var bySlug = {}; P.forEach(function (p) { bySlug[p.slug] = p; });
 
   // ---------- money ----------
@@ -104,7 +105,8 @@
   var cards = [], st = { w: 0, h: 0, cx: 0, cy: 0, rx: 0, ry: 0, nMain: 0, nFar: 0 };
   var phase = 0, farPhase = .4, vel = 0, base = reduce ? 0 : .13, speed = base, paused = reduce, hot = null, visible = true, raf = 0, last = 0;
   var drag = { on: false, x: 0, t: 0, moved: 0, used: false, sign: 1 };
-  var stars = [];
+  var stars = [], frontIdx = null;
+  function rescatter() { cards.forEach(function (c) { c.spawn = 0; }); frontIdx = null; kick(); }
 
   function buildRing() {
     var html = '', i;
@@ -130,6 +132,7 @@
       c.el.addEventListener('click', function (e) {
         e.preventDefault();
         if (drag.used) return;
+        if (FX) FX.sound.click();
         openFrom(c.p, c.tilt);
       });
     });
@@ -216,6 +219,12 @@
       c.el.style.zIndex = isHot ? 400 : Math.round(depth * 100) + (main ? 100 : 0);
       c.el.style.filter = 'brightness(' + bright.toFixed(2) + ')' + (main ? '' : ' blur(' + (1.6 - depth).toFixed(1) + 'px)');
       c.el.style.opacity = (main ? 1 : .7) * sp;
+    }
+    // a soft tick every time a tile passes the front of the ring (fast when dragged, like a wheel)
+    if (FX && st.nMain && cards.length && cards[0].spawn >= 1) {
+      var fi = Math.round((1.5708 - phase) / 6.2832 * st.nMain);
+      if (frontIdx !== null && fi !== frontIdx) FX.sound.tick(Math.max(-1, Math.min(1, vel / 4)));
+      frontIdx = fi;
     }
     drawSky(t);
     if ((moving || !reduce) && visible && !document.hidden) kick();
@@ -501,12 +510,17 @@
     } else if (!reduce) {
       det.animate([{ opacity: 0, transform: wasOpen ? 'translateX(30px)' : 'scale(1.02)' }, { opacity: 1, transform: 'none' }], { duration: 450, easing: 'cubic-bezier(.2,.7,.2,1)' });
     }
+    var flew = !!fromRect && !reduce;
     fromRect = null;
     setTimeout(function () { $('#close').focus({ preventScroll: true }); }, 50);
+    // red ribbon across the page: the visitor cuts it to reveal the property
+    $$('.rb').forEach(function (n) { n.remove(); });
+    if (FX) setTimeout(function () { if (openSlug === p.slug && !$('.rb')) FX.ribbon(document.body); }, flew ? 700 : 200);
   }
   function hideDetail() {
     if (det.hidden) return;
     var done = function () { det.hidden = true; detIn.innerHTML = ''; document.body.classList.remove('lock'); };
+    $$('.rb').forEach(function (n) { n.remove(); });
     openSlug = null; document.title = 'Vilaso Properties \u00b7 Plots & villas in Dindigul';
     if (reduce) done(); else det.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, easing: 'ease-in' }).onfinish = done;
     kick();
@@ -529,11 +543,32 @@
     var a = e.target.closest('a[href^="#/p/"]'); if (!a || a.classList.contains('o-card')) return;
     var img = a.querySelector('.pst, .th') || (a.closest('li') && a.closest('li').querySelector('.pst'));
     if (img && det.hidden) fromRect = img.getBoundingClientRect();
+    if (FX) FX.sound.click();
     res.hidden = true;
   });
 
+  // ---------- sound ----------
+  function setupSound() {
+    var b = $('#snd');
+    if (!FX) { b.hidden = true; return; }
+    var ON = '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg>';
+    var OFF = '<svg viewBox="0 0 24 24"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="m17 9 5 6M22 9l-5 6"/></svg>';
+    var paint = function () { var on = FX.isOn(); b.setAttribute('aria-pressed', String(on)); b.innerHTML = (on ? ON : OFF) + (on ? 'Sound on' : 'Sound off'); };
+    paint();
+    b.addEventListener('click', function () { FX.toggle(); paint(); if (FX.isOn()) FX.sound.click(); });
+    var hd = $('.o-help-d'), hm = $('.o-help-m'), oldD = hd.textContent, oldM = hm.textContent;
+    if (FX.isOn()) { hd.textContent = 'Tap anywhere for sound \u00B7 drag to spin'; hm.textContent = 'Tap anywhere for sound \u00B7 swipe to spin'; }
+    // sound can only start after the first tap or key press; then the tiles scatter again with their sound
+    FX.whenUnlocked(function (e) {
+      hd.textContent = oldD; hm.textContent = oldM;
+      var t = e && e.target;
+      if (FX.isOn() && !(t && t.closest && t.closest('a, button, input, .o-card, .det'))) { rescatter(); FX.sound.scatter(); }
+    });
+  }
+
   // ---------- boot ----------
   buildRing();
+  setupSound();
   renderHome();
   watch();
   layout();
