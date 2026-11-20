@@ -8,7 +8,7 @@
   'use strict';
   var D = window.VILASO;
   var P = D.projects;
-  var RS = '\u20b9', DOT = ' \u00b7 ', UP = '\u25b2 ', EN = '\u2013';
+  var RS = '\u20b9', DOT = ' \u00b7 ', UP = '+', EN = '\u2013';
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   var $ = function (s, r) { return (r || document).querySelector(s); };
@@ -39,7 +39,7 @@
   // ---------- 1. poster art ----------
   var uid = 0;
   function titleLines(name) {
-    if (name.length <= 12) return [name];
+    if (name.length <= 10) return [name];
     var mid = name.length / 2, best = -1;
     for (var i = 0; i < name.length; i++) if (name[i] === ' ' && (best < 0 || Math.abs(i - mid) < Math.abs(best - mid))) best = i;
     return best < 0 ? [name] : [name.slice(0, best), name.slice(best + 1)];
@@ -84,9 +84,9 @@
     return s;
   }
   function poster(p) {
-    var id = 'g' + (++uid), c = p.palette, lines = titleLines(p.name), fs = lines.length > 1 ? 27 : 31;
-    var t = lines.map(function (l, i) { return '<tspan x="100" dy="' + (i ? fs * .95 : 0) + '">' + esc(l) + '</tspan>'; }).join('');
-    var ty = lines.length > 1 ? 246 : 262;
+    var id = 'g' + (++uid), c = p.palette, lines = titleLines(p.name.toUpperCase()), fs = 16;
+    var t = lines.map(function (l, i) { return '<tspan x="100" dy="' + (i ? 23 : 0) + '">' + esc(l) + '</tspan>'; }).join('');
+    var ty = lines.length > 1 ? 248 : 262, F = 'font-family="Noto Sans, sans-serif"';
     return '<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(p.name) + '">' +
       '<defs><linearGradient id="' + id + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/></linearGradient>' +
       '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="' + c[2] + '" stop-opacity=".28"/><stop offset=".35" stop-color="' + c[2] + '" stop-opacity=".1"/><stop offset="1" stop-color="' + c[2] + '" stop-opacity="0"/></radialGradient>' +
@@ -94,14 +94,14 @@
       '<rect width="200" height="300" fill="url(#' + id + 'b)"/><circle cx="150" cy="78" r="70" fill="url(#' + id + 's)"/><circle cx="150" cy="78" r="11" fill="' + c[2] + '" opacity=".85"/>' +
       motif(p.motif, c, id) +
       '<rect width="200" height="300" fill="url(#' + id + 'f)"/>' +
-      '<text x="16" y="28" fill="#151311" font-family="Instrument Serif, Georgia, serif" font-size="15" letter-spacing="2.4">VILASO</text><path d="M77 20 h7 l-3.5 5.5z" fill="#c8202a"/>' +
-      (p.sample ? '<text x="184" y="27" text-anchor="end" fill="rgba(21,19,17,.5)" font-family="Geist, sans-serif" font-size="9" letter-spacing="1.5">SAMPLE</text>' : '<text x="184" y="27" text-anchor="end" fill="' + c[2] + '" font-family="Geist, sans-serif" font-size="9" font-weight="600" letter-spacing="1.2">' + esc(p.status.toUpperCase()) + '</text>') +
-      '<text x="100" y="' + ty + '" text-anchor="middle" fill="#151311" font-family="Instrument Serif, Georgia, serif" font-size="' + fs + '">' + t + '</text>' +
-      '<text x="100" y="288" text-anchor="middle" fill="rgba(21,19,17,.62)" font-family="Geist, sans-serif" font-size="9.5" letter-spacing="1.3">' + esc((p.kind + DOT + p.area).toUpperCase()) + '</text></svg>';
+      '<text x="16" y="28" fill="#1d1b19" ' + F + ' font-size="10" letter-spacing="4">VILASO</text><path d="M80 21.5 h7 l-3.5 5.5z" fill="#c8202a"/>' +
+      (p.sample ? '<text x="184" y="27" text-anchor="end" fill="rgba(29,27,25,.5)" ' + F + ' font-size="7.5" letter-spacing="1.8">SAMPLE</text>' : '<text x="184" y="27" text-anchor="end" fill="' + c[2] + '" ' + F + ' font-size="7.5" font-weight="600" letter-spacing="1.6">' + esc(p.status.toUpperCase()) + '</text>') +
+      '<text x="100" y="' + ty + '" text-anchor="middle" fill="#1d1b19" ' + F + ' font-size="' + fs + '" letter-spacing="3.2">' + t + '</text>' +
+      '<text x="100" y="288" text-anchor="middle" fill="rgba(29,27,25,.6)" ' + F + ' font-size="7.5" letter-spacing="2">' + esc((p.kind + DOT + p.area).toUpperCase()) + '</text></svg>';
   }
 
   // ---------- 2. orbit ----------
-  var orbit = $('#orbit'), ring = $('#ring'), sky = $('#sky'), glow = $('#glow'), help = $('#help'), pauseBtn = $('#pause');
+  var orbit = $('#orbit'), ring = $('#ring'), sky = $('#sky'), help = $('#help'), pauseBtn = $('#pause');
   var cards = [], st = { w: 0, h: 0, cx: 0, cy: 0, rx: 0, ry: 0, nMain: 0, nFar: 0 };
   var phase = 0, farPhase = .4, vel = 0, base = reduce ? 0 : .13, speed = base, paused = reduce, hot = null, visible = true, raf = 0, last = 0;
   var drag = { on: false, x: 0, t: 0, moved: 0, used: false, sign: 1 };
@@ -120,12 +120,7 @@
       if (c.ring !== 'main') { c.el.tabIndex = -1; c.el.setAttribute('aria-hidden', 'true'); return; }
       if (fine) {
         c.el.addEventListener('pointerenter', function () { if (!drag.on) setHot(c); });
-        c.el.addEventListener('pointerleave', function () { if (hot === c) setHot(null); c.tilt.style.setProperty('--rx', '0deg'); c.tilt.style.setProperty('--ry', '0deg'); });
-        c.el.addEventListener('pointermove', function (e) {
-          var r = c.tilt.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
-          c.tilt.style.setProperty('--ry', ((x - .5) * 26).toFixed(1) + 'deg'); c.tilt.style.setProperty('--rx', (-(y - .5) * 26).toFixed(1) + 'deg');
-          c.tilt.style.setProperty('--gx', (x * 100).toFixed(1) + '%'); c.tilt.style.setProperty('--gy', (y * 100).toFixed(1) + '%');
-        });
+        c.el.addEventListener('pointerleave', function () { if (hot === c) setHot(null); });
       }
       c.el.addEventListener('focus', function () { setHot(c); });
       c.el.addEventListener('blur', function () { if (hot === c) setHot(null); });
@@ -139,18 +134,14 @@
   }
   function cardHTML(p, ringName, i) {
     return '<a class="o-card" href="#/p/' + p.slug + '" draggable="false" data-ring="' + ringName + '" data-i="' + i + '" data-slug="' + p.slug + '" aria-label="' + esc(p.name + ', ' + p.kind + ' in ' + p.area) + '">' +
-      '<span class="o-tilt">' + poster(p) + '<span class="o-foil"></span><span class="o-glare"></span></span>' +
+      '<span class="o-tilt">' + poster(p) + '</span>' +
       (ringName === 'main' ? '<span class="o-label">' + esc(p.name) + DOT + rate(p.price.now) + '/sq ft</span>' : '') + '</a>';
   }
   function setHot(c) {
     if (hot === c) return;
     if (hot) hot.el.classList.remove('hot');
     hot = c;
-    if (c) {
-      c.el.classList.add('hot');
-      glow.style.background = 'radial-gradient(circle at 50% 50%, ' + c.p.palette[2] + '33, transparent 60%)';
-      glow.style.opacity = '1';
-    } else glow.style.opacity = '0';
+    if (c) c.el.classList.add('hot');
     kick();
   }
   function layout() {
@@ -266,22 +257,7 @@
   addEventListener('scroll', function () { $('#hdr').classList.toggle('solid', scrollY > 40); kick(); }, { passive: true });
 
   // ---------- search ----------
-  var q = $('#q'), res = $('#res'), hint = $('#hint');
-  var HINTS = ['Plots near the new bus stand', 'Villas on Old Karur Road', 'Plots under ' + RS + '15 lakh', 'DTCP & RERA approved', 'Launching soon', 'Apartments on Trichy Road'];
-  var CHIPS = [['Plots under ' + RS + '15 L', 'plots under 15'], ['Villas', 'villas'], ['Near the bus stand', 'bus stand'], ['Launching soon', 'launching'], ['Apartments', 'apartments']];
-  $('#chips').innerHTML = CHIPS.map(function (c) { return '<button class="chip" type="button" data-q="' + esc(c[1]) + '">' + esc(c[0]) + '</button>'; }).join('');
-  $('#chips').addEventListener('click', function (e) { var b = e.target.closest('[data-q]'); if (!b) return; q.value = b.dataset.q; search(); q.focus(); });
-  if (!reduce) {
-    var hi = 0;
-    setInterval(function () {
-      if (document.hidden || q.value) return;
-      hi = (hi + 1) % HINTS.length;
-      hint.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(-6px)' }], { duration: 180, easing: 'ease-in' }).onfinish = function () {
-        hint.textContent = HINTS[hi];
-        hint.animate([{ opacity: 0, transform: 'translateY(6px)' }, { opacity: 1, transform: 'none' }], { duration: 220, easing: 'ease-out' });
-      };
-    }, 2800);
-  }
+  var q = $('#q'), res = $('#res');
   function search() {
     var v = q.value.trim().toLowerCase();
     if (!v) { res.hidden = true; return; }
@@ -356,9 +332,6 @@
     $('#banks').textContent = D.banks.join(DOT);
     $('#cta').innerHTML = contactBtns();
 
-    var tk = P.filter(function (p) { return !p.sample; }).map(function (p) { return '<span><b>' + esc(p.name) + '</b><i>' + UP + pct(cagr(p.price.y10, p.price.now, 10)) + '/yr</i></span>'; })
-      .concat(Object.keys(D.localities).map(function (k) { return '<span><b>' + esc(k) + '</b>' + rate(D.localities[k]) + '/sq ft</span>'; })).join('');
-    $('#tick').innerHTML = tk + tk;
   }
   function bars(rows) {
     var max = Math.max.apply(null, rows.map(function (r) { return r.v; }));
@@ -394,8 +367,7 @@
     var unit = p.builtUp ? 'sq ft built-up' : 'sq ft';
     var lo = p.builtUp ? 900 : 600, hi = p.builtUp ? 2400 : 3000;
 
-    return '<div class="d-bg" aria-hidden="true">' + poster(p) + '</div>' +
-      '<div class="d-top"><a class="logo" href="#/" aria-label="Back to all properties"><span class="logo-w">VILASO</span><i class="logo-t"></i><span class="logo-s">Properties</span></a>' +
+    return '<div class="d-top"><a class="logo" href="#/" aria-label="Back to all properties"><span class="logo-w">VILASO</span><i class="logo-t"></i><span class="logo-s">Properties</span></a>' +
       '<button class="btn d-close" type="button" id="close"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg>All properties</button></div>' +
 
       '<section class="d-hero"><div>' +
@@ -558,7 +530,7 @@
     paint();
     b.addEventListener('click', function () { FX.toggle(); paint(); if (FX.isOn()) FX.sound.click(); });
     var hd = $('.o-help-d'), hm = $('.o-help-m'), oldD = hd.textContent, oldM = hm.textContent;
-    if (FX.isOn()) { hd.textContent = 'Tap anywhere for sound \u00B7 drag to spin'; hm.textContent = 'Tap anywhere for sound \u00B7 swipe to spin'; }
+    if (FX.isOn()) { hd.textContent = 'Tap anywhere for sound \u00B7 drag to spin'; hm.textContent = 'Tap for sound'; }
     // sound can only start after the first tap or key press; then the tiles scatter again with their sound
     FX.whenUnlocked(function (e) {
       hd.textContent = oldD; hm.textContent = oldM;
