@@ -53,24 +53,24 @@
         s += '<rect x="' + x + '" y="' + y + '" width="20" height="20" rx="1.5" fill="' + (k === 0 ? a : k === 1 ? '#2f5a3e' : '#24432f') + '" opacity="' + (k === 0 ? '.85' : '.9') + '" stroke="rgba(255,255,255,.12)" stroke-width=".6"/>';
         if (k === 2) s += '<circle cx="' + (x + 10) + '" cy="' + (y + 10) + '" r="6" fill="#3f7a52"/>';
       }
-      s += '<rect x="-74" y="-1.5" width="148" height="3" fill="rgba(236,235,231,.5)"/><rect x="-1.5" y="-74" width="3" height="148" fill="rgba(236,235,231,.5)"/></g>';
+      s += '<rect x="-74" y="-1.5" width="148" height="3" fill="rgba(255,255,255,.8)"/><rect x="-1.5" y="-74" width="3" height="148" fill="rgba(255,255,255,.8)"/></g>';
       s += '<path d="M100 120c-7 0-12 5-12 12 0 9 12 20 12 20s12-11 12-20c0-7-5-12-12-12z" fill="#d7262f"/><circle cx="100" cy="132" r="4.5" fill="#fff"/>';
     } else if (kind === 'villa') {
-      s += '<path d="M0 205 Q60 180 120 196 T200 188 V300 H0z" fill="rgba(0,0,0,.35)"/>';
-      s += '<rect x="52" y="150" width="96" height="58" fill="#efe4d0"/><path d="M44 152 L100 116 L156 152z" fill="#5a3a22"/>';
+      s += '<path d="M0 205 Q60 180 120 196 T200 188 V300 H0z" fill="rgba(90,110,70,.25)"/>';
+      s += '<rect x="52" y="150" width="96" height="58" fill="#fffaf2" stroke="rgba(90,58,34,.35)"/><path d="M44 152 L100 116 L156 152z" fill="#5a3a22"/>';
       s += '<rect x="64" y="166" width="18" height="16" fill="' + a + '"/><rect x="118" y="166" width="18" height="16" fill="' + a + '"/><rect x="91" y="176" width="18" height="32" fill="#5a3a22"/>';
       s += '<g stroke="#2a3a20" stroke-width="3" fill="none" stroke-linecap="round"><path d="M28 210 C30 180 26 160 32 140"/><path d="M172 210 C170 186 174 166 168 148"/></g>';
       s += '<g fill="#3c5a2a"><path d="M32 140 q-18 -4 -26 8 q14 -4 26 -8z"/><path d="M32 140 q18 -6 26 6 q-14 -4 -26 -6z"/><path d="M32 140 q-6 -16 6 -22 q-6 10 -6 22z"/><path d="M168 148 q-18 -4 -26 8 q14 -4 26 -8z"/><path d="M168 148 q18 -6 26 6 q-14 -4 -26 -6z"/></g>';
-      s += '<path d="M60 300 L92 208 h16 L140 300z" fill="rgba(236,235,231,.12)"/>';
+      s += '<path d="M60 300 L92 208 h16 L140 300z" fill="rgba(120,90,60,.14)"/>';
     } else if (kind === 'tower') {
       var b = [[34, 120, 40, 110], [80, 96, 46, 134], [132, 132, 36, 98]];
       b.forEach(function (t) {
-        s += '<rect x="' + t[0] + '" y="' + t[1] + '" width="' + t[2] + '" height="' + t[3] + '" fill="rgba(0,0,0,.45)" stroke="rgba(255,255,255,.1)"/>';
+        s += '<rect x="' + t[0] + '" y="' + t[1] + '" width="' + t[2] + '" height="' + t[3] + '" fill="rgba(42,30,50,.78)" stroke="rgba(255,255,255,.2)"/>';
         for (var yy = t[1] + 8; yy < t[1] + t[3] - 8; yy += 12) for (var xx = t[0] + 6; xx < t[0] + t[2] - 6; xx += 10)
           s += '<rect x="' + xx + '" y="' + yy + '" width="5" height="6" fill="' + a + '" opacity="' + (((xx * 7 + yy * 3) % 11) > 4 ? '.85' : '.15') + '"/>';
       });
     } else if (kind === 'gate') {
-      s += '<path d="M40 300 L94 200 h12 L160 300z" fill="rgba(236,235,231,.14)"/>';
+      s += '<path d="M40 300 L94 200 h12 L160 300z" fill="rgba(60,70,80,.12)"/>';
       s += '<path d="M48 214 V150 a52 52 0 0 1 104 0 V214 h-16 V152 a36 36 0 0 0 -72 0 V214z" fill="#d9cdb5"/>';
       s += '<rect x="40" y="206" width="24" height="10" fill="#bfb194"/><rect x="136" y="206" width="24" height="10" fill="#bfb194"/>';
       s += '<g fill="#3a5a40"><circle cx="22" cy="196" r="16"/><circle cx="178" cy="196" r="16"/><circle cx="10" cy="210" r="12"/><circle cx="190" cy="212" r="12"/></g>';
@@ -89,15 +89,15 @@
     var ty = lines.length > 1 ? 246 : 262;
     return '<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + esc(p.name) + '">' +
       '<defs><linearGradient id="' + id + 'b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset="1" stop-color="' + c[1] + '"/></linearGradient>' +
-      '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="' + c[2] + '" stop-opacity=".9"/><stop offset=".35" stop-color="' + c[2] + '" stop-opacity=".35"/><stop offset="1" stop-color="' + c[2] + '" stop-opacity="0"/></radialGradient>' +
-      '<linearGradient id="' + id + 'f" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".85"/></linearGradient></defs>' +
-      '<rect width="200" height="300" fill="url(#' + id + 'b)"/><circle cx="150" cy="78" r="70" fill="url(#' + id + 's)"/><circle cx="150" cy="78" r="13" fill="' + c[2] + '" opacity=".9"/>' +
+      '<radialGradient id="' + id + 's" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="' + c[2] + '" stop-opacity=".28"/><stop offset=".35" stop-color="' + c[2] + '" stop-opacity=".1"/><stop offset="1" stop-color="' + c[2] + '" stop-opacity="0"/></radialGradient>' +
+      '<linearGradient id="' + id + 'f" x1="0" y1="0" x2="0" y2="1"><stop offset=".55" stop-color="#fbf8f2" stop-opacity="0"/><stop offset="1" stop-color="#fbf8f2" stop-opacity=".95"/></linearGradient></defs>' +
+      '<rect width="200" height="300" fill="url(#' + id + 'b)"/><circle cx="150" cy="78" r="70" fill="url(#' + id + 's)"/><circle cx="150" cy="78" r="11" fill="' + c[2] + '" opacity=".85"/>' +
       motif(p.motif, c, id) +
       '<rect width="200" height="300" fill="url(#' + id + 'f)"/>' +
-      '<text x="16" y="28" fill="rgba(236,235,231,.85)" font-family="Instrument Serif, Georgia, serif" font-size="15" letter-spacing="2.4">VILASO</text><path d="M77 20 h7 l-3.5 5.5z" fill="#d7262f"/>' +
-      (p.sample ? '<text x="184" y="27" text-anchor="end" fill="rgba(236,235,231,.6)" font-family="Geist, sans-serif" font-size="9" letter-spacing="1.5">SAMPLE</text>' : '<text x="184" y="27" text-anchor="end" fill="' + c[2] + '" font-family="Geist, sans-serif" font-size="9" font-weight="600" letter-spacing="1.2">' + esc(p.status.toUpperCase()) + '</text>') +
-      '<text x="100" y="' + ty + '" text-anchor="middle" fill="#ecebe7" font-family="Instrument Serif, Georgia, serif" font-size="' + fs + '">' + t + '</text>' +
-      '<text x="100" y="288" text-anchor="middle" fill="rgba(236,235,231,.7)" font-family="Geist, sans-serif" font-size="9.5" letter-spacing="1.3">' + esc((p.kind + DOT + p.area).toUpperCase()) + '</text></svg>';
+      '<text x="16" y="28" fill="#151311" font-family="Instrument Serif, Georgia, serif" font-size="15" letter-spacing="2.4">VILASO</text><path d="M77 20 h7 l-3.5 5.5z" fill="#c8202a"/>' +
+      (p.sample ? '<text x="184" y="27" text-anchor="end" fill="rgba(21,19,17,.5)" font-family="Geist, sans-serif" font-size="9" letter-spacing="1.5">SAMPLE</text>' : '<text x="184" y="27" text-anchor="end" fill="' + c[2] + '" font-family="Geist, sans-serif" font-size="9" font-weight="600" letter-spacing="1.2">' + esc(p.status.toUpperCase()) + '</text>') +
+      '<text x="100" y="' + ty + '" text-anchor="middle" fill="#151311" font-family="Instrument Serif, Georgia, serif" font-size="' + fs + '">' + t + '</text>' +
+      '<text x="100" y="288" text-anchor="middle" fill="rgba(21,19,17,.62)" font-family="Geist, sans-serif" font-size="9.5" letter-spacing="1.3">' + esc((p.kind + DOT + p.area).toUpperCase()) + '</text></svg>';
   }
 
   // ---------- 2. orbit ----------
@@ -175,8 +175,8 @@
     for (var i = 0; i < stars.length; i++) {
       var s = stars[i], tw = .55 + .45 * Math.sin(t * .0012 * (1 + s.z) + s.a);
       var x = ((s.x * st.w + phase * 18 * s.z) % st.w + st.w) % st.w;
-      g.globalAlpha = tw * (.25 + .6 * s.z);
-      g.fillStyle = i % 9 === 0 ? '#ffcf7a' : '#ecebe7';
+      g.globalAlpha = tw * (.12 + .3 * s.z);
+      g.fillStyle = i % 9 === 0 ? '#c8202a' : '#9a8b73';
       g.beginPath(); g.arc(x, s.y * st.h, s.r, 0, 6.283); g.fill();
     }
     g.globalAlpha = 1;
@@ -213,12 +213,13 @@
       var s = main ? .52 + .62 * depth : .3 + .2 * depth;
       s = (s + (Math.max(s, 1) * 1.22 - s) * c.lift) * (.35 + .65 * sp);
       var yaw = -cs * (main ? 22 : 0) * (1 - c.lift);
-      var bright = main ? .32 + .68 * depth : .25 + .25 * depth;
-      bright += (1 - bright) * c.lift;
+      // light theme: tiles further back fade into the beige instead of going dark
+      var fade = main ? .38 + .62 * depth : .18 + .22 * depth;
+      fade += (1 - fade) * c.lift;
       c.el.style.transform = 'translate3d(' + X.toFixed(1) + 'px,' + Y.toFixed(1) + 'px,0) scale(' + s.toFixed(3) + ') rotateY(' + yaw.toFixed(1) + 'deg)';
       c.el.style.zIndex = isHot ? 400 : Math.round(depth * 100) + (main ? 100 : 0);
-      c.el.style.filter = 'brightness(' + bright.toFixed(2) + ')' + (main ? '' : ' blur(' + (1.6 - depth).toFixed(1) + 'px)');
-      c.el.style.opacity = (main ? 1 : .7) * sp;
+      c.el.style.filter = main ? 'saturate(' + (.7 + .3 * depth).toFixed(2) + ')' : 'saturate(.6) blur(' + (1.6 - depth).toFixed(1) + 'px)';
+      c.el.style.opacity = (fade * sp).toFixed(3);
     }
     // a soft tick every time a tile passes the front of the ring (fast when dragged, like a wheel)
     if (FX && st.nMain && cards.length && cards[0].spawn >= 1) {
@@ -451,7 +452,7 @@
     var pts = yrs.map(function (y, i) { return [X(y), Y(vals[i])]; });
     var path = function (a) { return a.map(function (q, i) { return (i ? 'L' : 'M') + q[0].toFixed(1) + ' ' + q[1].toFixed(1); }).join(' '); };
     var past = pts.slice(0, 4), fut = pts.slice(3);
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Price per square foot from ' + x0 + ' to ' + x1 + '"><defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f2a93b" stop-opacity=".35"/><stop offset="1" stop-color="#f2a93b" stop-opacity="0"/></linearGradient></defs>';
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Price per square foot from ' + x0 + ' to ' + x1 + '"><defs><linearGradient id="ga" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#c8202a" stop-opacity=".22"/><stop offset="1" stop-color="#c8202a" stop-opacity="0"/></linearGradient></defs>';
     for (var g = 0; g <= 4; g++) { var yv = tick * g; s += '<line class="ax" x1="' + L + '" x2="' + (W - R) + '" y1="' + Y(yv) + '" y2="' + Y(yv) + '"/><text class="yl" x="' + (L - 10) + '" y="' + (Y(yv) + 4) + '" text-anchor="end">' + RS + num(yv) + '</text>'; }
     yrs.forEach(function (y) { s += '<text class="xl" x="' + X(y) + '" y="' + (H - 12) + '" text-anchor="middle">' + y + '</text>'; });
     s += '<line class="nowline" x1="' + X(D.years.now) + '" x2="' + X(D.years.now) + '" y1="' + T + '" y2="' + (H - B) + '"/><text class="tag" x="' + X(D.years.now) + '" y="' + (T - 14) + '">Today</text>';

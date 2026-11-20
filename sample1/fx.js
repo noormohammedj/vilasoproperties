@@ -121,15 +121,16 @@
   ['pointerdown', 'keydown', 'touchend'].forEach(function (n) { addEventListener(n, unlock, true); });
 
   // ---------- ribbon cutting ----------
-  var BOW = '<svg viewBox="0 0 200 150" aria-hidden="true"><defs>' +
-    '<linearGradient id="rbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5a61"/><stop offset=".45" stop-color="#d81f28"/><stop offset="1" stop-color="#7d0a12"/></linearGradient>' +
-    '<linearGradient id="rbk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff6d73"/><stop offset="1" stop-color="#9c0e16"/></linearGradient></defs>' +
-    '<path d="M92 80 L66 146 L80 138 L88 150 L100 84z" fill="#a30f18"/><path d="M108 80 L134 146 L120 138 L112 150 L100 84z" fill="#8f0c14"/>' +
-    '<path d="M100 72 C74 18 14 18 20 60 C26 100 78 92 100 72z" fill="url(#rbg)"/><path d="M100 72 C126 18 186 18 180 60 C174 100 122 92 100 72z" fill="url(#rbg)"/>' +
-    '<path d="M100 72 C80 36 42 34 40 58" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3" stroke-linecap="round"/><path d="M100 72 C120 36 158 34 160 58" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3" stroke-linecap="round"/>' +
-    '<rect x="84" y="56" width="32" height="32" rx="9" fill="url(#rbk)" stroke="#e9b949" stroke-width="1.5"/></svg>';
+  // Steel scissors drawn upright: handles on top, pivot at (30,58), blade tips at the bottom.
+  var SHEARS = '<svg viewBox="0 0 60 140" aria-hidden="true"><defs>' +
+    '<linearGradient id="rbst" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8d9196"/><stop offset=".45" stop-color="#f4f5f6"/><stop offset=".6" stop-color="#c9ccd0"/><stop offset="1" stop-color="#7c8086"/></linearGradient></defs>' +
+    '<g class="ba"><ellipse cx="16" cy="20" rx="9.5" ry="14" fill="none" stroke="#151311" stroke-width="4.5"/><path d="M21 32 L31 57" stroke="#151311" stroke-width="5" stroke-linecap="round"/>' +
+    '<path d="M27 54 L35 57 L31 134 Q30 138 29.2 134 Z" fill="url(#rbst)" stroke="#6d7177" stroke-width=".5"/></g>' +
+    '<g class="bb"><ellipse cx="44" cy="20" rx="9.5" ry="14" fill="none" stroke="#151311" stroke-width="4.5"/><path d="M39 32 L29 57" stroke="#151311" stroke-width="5" stroke-linecap="round"/>' +
+    '<path d="M33 54 L25 57 L29 134 Q30 138 30.8 134 Z" fill="url(#rbst)" stroke="#6d7177" stroke-width=".5"/></g>' +
+    '<circle cx="30" cy="58" r="2.6" fill="#d9dbde" stroke="#5d6166" stroke-width=".8"/></svg>';
   var SCISSORS = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.12 15.88M14.47 14.48 20 20M8.12 8.12 12 12"/></svg>';
-  var WORDS = new Array(14).join('VILASO PROPERTIES \u2726 GRAND REVEAL \u2726 ');
+  var SMOOTH = 'cubic-bezier(.22,1,.36,1)';
 
   function ribbon(host, done) {
     done = done || function () {};
@@ -138,76 +139,73 @@
     w.className = 'rb'; w.tabIndex = 0;
     w.setAttribute('role', 'button'); w.setAttribute('aria-label', 'Cut the ribbon to open this property');
     w.innerHTML = '<div class="rb-veil"></div>' +
-      '<div class="rb-band"><div class="rb-half rb-l"><span>' + WORDS + '</span></div><div class="rb-half rb-r"><span>' + WORDS + '</span></div></div>' +
-      '<div class="rb-bow">' + BOW + '</div>' +
-      '<p class="rb-hint">' + SCISSORS + '<span>Tap the ribbon to cut it open</span></p>';
+      '<div class="rb-band"><div class="rb-half rb-l"></div><div class="rb-half rb-r"></div></div>' +
+      '<div class="rb-seal"><span>V</span><i></i></div>' +
+      '<p class="rb-hint">' + SCISSORS + '<span>Tap the ribbon to unveil</span></p>';
     host.appendChild(w);
-    var band = w.querySelector('.rb-band'), L = w.querySelector('.rb-l'), R = w.querySelector('.rb-r'), bow = w.querySelector('.rb-bow'), veil = w.querySelector('.rb-veil'), hint = w.querySelector('.rb-hint');
+    var band = w.querySelector('.rb-band'), L = w.querySelector('.rb-l'), R = w.querySelector('.rb-r'), seal = w.querySelector('.rb-seal'), veil = w.querySelector('.rb-veil'), hint = w.querySelector('.rb-hint');
     var cut = false, timer = 0;
     var stop = function (e) { e.preventDefault(); };
     w.addEventListener('wheel', stop, { passive: false });
     w.addEventListener('touchmove', stop, { passive: false });
 
-    // entrance: the two halves stretch in from the sides and meet, then the bow pops
+    // entrance: the satin glides in from both sides and meets in the middle, then the seal settles on it
     S.swish();
-    veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 400, fill: 'both' });
-    L.animate([{ transform: 'translateX(-105%)' }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
-    R.animate([{ transform: 'translateX(105%)' }, { transform: 'none' }], { duration: 650, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'both' });
-    bow.animate([{ transform: 'translate(-50%,-50%) scale(0) rotate(-30deg)' }, { transform: 'translate(-50%,-50%) scale(1.15) rotate(6deg)', offset: .7 }, { transform: 'translate(-50%,-50%) scale(1) rotate(0)' }], { duration: 600, delay: 450, easing: 'ease-out', fill: 'both' });
-    hint.animate([{ opacity: 0, transform: 'translate(-50%, 10px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 500, delay: 900, fill: 'both' });
+    veil.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, easing: 'ease-out', fill: 'both' });
+    L.animate([{ transform: 'translateX(-100%)' }, { transform: 'none' }], { duration: 900, easing: SMOOTH, fill: 'both' });
+    R.animate([{ transform: 'translateX(100%)' }, { transform: 'none' }], { duration: 900, easing: SMOOTH, fill: 'both' });
+    seal.animate([{ opacity: 0, transform: 'scale(.86)' }, { opacity: 1, transform: 'none' }], { duration: 600, delay: 600, easing: SMOOTH, fill: 'both' });
+    hint.animate([{ opacity: 0, transform: 'translate(-50%, 8px)' }, { opacity: 1, transform: 'translate(-50%, 0)' }], { duration: 600, delay: 950, easing: SMOOTH, fill: 'both' });
     setTimeout(function () { if (!cut) w.focus({ preventScroll: true }); }, 700);
-    timer = setTimeout(function () { doCut(innerWidth * .5, innerHeight * .5); }, 9000);
+    timer = setTimeout(function () { doCut(innerWidth * .5 + 70, innerHeight * .5); }, 9000);
 
     function doCut(x, y) {
       if (cut) return; cut = true; clearTimeout(timer);
       var br = band.getBoundingClientRect();
       var pct = Math.max(.12, Math.min(.88, (x - br.left) / br.width));
-      var midY = br.top + br.height / 2;
-      w.style.setProperty('--cut', (pct * 100).toFixed(2) + '%');
-      w.classList.add('cut');
-      S.snip();
-      setTimeout(S.shimmer, 160);
+      if (Math.abs(pct - .5) < .05) pct = .5 + (pct < .5 ? -.05 : .05); // never cut through the seal
+      var cx = br.left + br.width * pct, midY = br.top + br.height / 2 + (cx - (br.left + br.width / 2)) * Math.tan(-3 * Math.PI / 180);
+      hint.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' });
 
-      // scissors snapping shut at the cut point + a bright slash
-      var sc = document.createElement('div'); sc.className = 'rb-sc'; sc.innerHTML = SCISSORS;
-      sc.style.left = x + 'px'; sc.style.top = midY + 'px'; w.appendChild(sc);
-      sc.animate([{ transform: 'translate(-50%,-50%) rotate(-90deg) scale(.6)', opacity: 0 }, { transform: 'translate(-50%,-50%) rotate(-90deg) scale(1.25)', opacity: 1, offset: .35 }, { transform: 'translate(-50%,-50%) rotate(-90deg) scale(1)', opacity: 0 }], { duration: 600, easing: 'ease-out', fill: 'forwards' });
-      var sl = document.createElement('div'); sl.className = 'rb-slash'; sl.style.left = x + 'px'; sl.style.top = midY + 'px'; w.appendChild(sl);
-      sl.animate([{ transform: 'translate(-50%,-50%) rotate(14deg) scaleY(0)', opacity: 1 }, { transform: 'translate(-50%,-50%) rotate(14deg) scaleY(1)', opacity: 1, offset: .4 }, { transform: 'translate(-50%,-50%) rotate(14deg) scaleY(1.1)', opacity: 0 }], { duration: 450, easing: 'ease-out', fill: 'forwards' });
-
-      // each half recoils, droops from its outer end, then drops away
-      L.style.transformOrigin = '0% 50%'; R.style.transformOrigin = '100% 50%';
-      L.animate([{ transform: 'none' }, { transform: 'translateX(-2%) rotate(9deg)', offset: .3 }, { transform: 'translate(-8%, 120vh) rotate(38deg)' }], { duration: 1300, easing: 'cubic-bezier(.45,0,.7,.4)', fill: 'forwards' });
-      R.animate([{ transform: 'none' }, { transform: 'translateX(2%) rotate(-9deg)', offset: .3 }, { transform: 'translate(8%, 120vh) rotate(-38deg)' }], { duration: 1300, easing: 'cubic-bezier(.45,0,.7,.4)', fill: 'forwards' });
-      var side = pct < .5 ? 1 : -1;
-      bow.animate([{ transform: 'translate(-50%,-50%)' }, { transform: 'translate(calc(-50% + ' + (side * 30) + 'px), -70%) rotate(' + (side * 20) + 'deg)', offset: .25 }, { transform: 'translate(calc(-50% + ' + (side * 90) + 'px), 110vh) rotate(' + (side * 220) + 'deg)' }], { duration: 1400, easing: 'cubic-bezier(.4,0,.8,.5)', fill: 'forwards' });
-      hint.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 200, fill: 'forwards' });
-      veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 700, delay: 250, fill: 'forwards' });
-      confetti(w, x, midY);
-      setTimeout(function () { w.remove(); done(); }, 1500);
+      // the shears come down open over the ribbon, then close
+      var sc = document.createElement('div'); sc.className = 'rb-sc'; sc.innerHTML = SHEARS;
+      w.appendChild(sc); sc.style.left = (cx - sc.offsetWidth / 2) + 'px'; sc.style.top = (midY - sc.offsetHeight * 108 / 140) + 'px';
+      sc.animate([{ opacity: 0, transform: 'translateY(-26px) rotate(-3deg)' }, { opacity: 1, transform: 'rotate(-3deg)' }], { duration: 260, easing: SMOOTH, fill: 'forwards' });
+      setTimeout(function () { sc.classList.add('shut'); S.snip(); }, 260);
+      setTimeout(function () {
+        w.style.setProperty('--cut', (pct * 100).toFixed(2) + '%');
+        w.classList.add('cut');
+        var gl = document.createElement('div'); gl.className = 'rb-glint'; gl.style.left = cx + 'px'; gl.style.top = midY + 'px'; w.appendChild(gl);
+        gl.animate([{ opacity: 0, transform: 'rotate(-3deg) scaleY(.2)' }, { opacity: 1, transform: 'rotate(-3deg) scaleY(1)', offset: .3 }, { opacity: 0, transform: 'rotate(-3deg) scaleY(1.15)' }], { duration: 520, easing: 'ease-out', fill: 'forwards' });
+        // each side glides away like satin being drawn back, with a soft curl
+        L.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(-58%, 10px) rotate(-1.2deg)', opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+        R.animate([{ transform: 'none', opacity: 1 }, { transform: 'translate(58%, 10px) rotate(1.2deg)', opacity: 0 }], { duration: 1100, easing: 'cubic-bezier(.65,0,.35,1)', fill: 'forwards' });
+        seal.animate([{ transform: 'none', opacity: 1 }, { transform: 'translateY(46px) scale(.9)', opacity: 0 }], { duration: 800, delay: 80, easing: 'cubic-bezier(.55,0,.75,.4)', fill: 'forwards' });
+        sc.animate([{ opacity: 1, transform: 'rotate(-3deg)' }, { opacity: 0, transform: 'translateY(-34px) rotate(-3deg)' }], { duration: 420, delay: 120, easing: 'ease-in', fill: 'forwards' });
+        veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 800, delay: 380, easing: 'ease-out', fill: 'forwards' });
+        dust(w, cx, midY);
+        setTimeout(S.shimmer, 120);
+      }, 400);
+      setTimeout(function () { w.remove(); done(); }, 1700);
     }
     w.addEventListener('pointerdown', function (e) { if (e.button === 0) doCut(e.clientX, e.clientY); });
     w.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doCut(innerWidth / 2, innerHeight / 2); }
-      if (e.key === 'Escape') { e.stopPropagation(); doCut(innerWidth / 2, innerHeight / 2); }
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doCut(innerWidth / 2 + 70, innerHeight / 2); }
+      if (e.key === 'Escape') { e.stopPropagation(); doCut(innerWidth / 2 + 70, innerHeight / 2); }
     });
   }
 
-  function confetti(host, x, y) {
-    var colors = ['#f2a93b', '#ffcf7a', '#e9b949', '#d81f28', '#ff5a61', '#ecebe7'];
-    for (var i = 0; i < 46; i++) {
-      var p = document.createElement('i'); p.className = 'rb-bit';
-      p.style.left = x + 'px'; p.style.top = y + 'px';
-      p.style.background = colors[i % colors.length];
-      if (i % 3 === 0) { p.style.width = '6px'; p.style.height = '6px'; p.style.borderRadius = '50%'; }
+  // a few fine gold and red flecks drifting from the cut
+  function dust(host, x, y) {
+    var colors = ['#c9a45c', '#e3c98f', '#c8202a', '#b08a43'];
+    for (var i = 0; i < 18; i++) {
+      var p = document.createElement('i'); p.className = 'rb-dust';
+      p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.background = colors[i % colors.length];
       host.appendChild(p);
-      var a = Math.random() * Math.PI * 2, v = 120 + Math.random() * 320;
-      var dx = Math.cos(a) * v, dy = Math.sin(a) * v - 180, r = (Math.random() * 2 - 1) * 720;
-      p.animate([
-        { transform: 'translate(-50%,-50%) rotate(0deg)', opacity: 1 },
-        { transform: 'translate(calc(-50% + ' + (dx * .6).toFixed(0) + 'px), calc(-50% + ' + (dy * .6).toFixed(0) + 'px)) rotate(' + (r * .5).toFixed(0) + 'deg)', opacity: 1, offset: .35 },
-        { transform: 'translate(calc(-50% + ' + dx.toFixed(0) + 'px), calc(-50% + ' + (dy + 520).toFixed(0) + 'px)) rotate(' + r.toFixed(0) + 'deg)', opacity: 0 }
-      ], { duration: 1200 + Math.random() * 500, easing: 'cubic-bezier(.2,.6,.5,1)', fill: 'forwards' });
+      var a = Math.random() * Math.PI * 2, v = 26 + Math.random() * 70;
+      var dx = Math.cos(a) * v, dy = Math.sin(a) * v * .6 + 30 + Math.random() * 40;
+      p.animate([{ transform: 'translate(-50%,-50%) scale(1)', opacity: .95 }, { transform: 'translate(calc(-50% + ' + dx.toFixed(0) + 'px), calc(-50% + ' + dy.toFixed(0) + 'px)) scale(.4)', opacity: 0 }],
+        { duration: 900 + Math.random() * 500, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
     }
   }
 
