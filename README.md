@@ -1,6 +1,6 @@
 # Vilaso Properties — website prototypes
 
-Prototypes for [Vilaso Properties](https://www.instagram.com/vilaso_properties/), Dindigul, built by Inraa Solution.
+Prototypes for [Vilaso Properties](https://www.instagram.com/vilaso_properties/), Dindigul, built by Noor Mohammed.
 
 - `sample1/` — cinematic dark theme: rolling property tiles (drag to spin, tap to open), property detail with highlights, why invest, price story (10 yrs back, 10 yrs projected), comparison with nearby areas, amenities, site-visit contact.
 
