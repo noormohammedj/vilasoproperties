@@ -1,0 +1,16 @@
+# Vilaso Properties — website prototypes
+
+Prototypes for [Vilaso Properties](https://www.instagram.com/vilaso_properties/), Dindigul, built by Inraa Solution.
+
+- `sample1/` — cinematic dark theme: rolling property tiles (drag to spin, tap to open), property detail with highlights, why invest, price story (10 yrs back, 10 yrs projected), comparison with nearby areas, amenities, site-visit contact.
+
+Static HTML/CSS/JS, no build step. Hosted on GitHub Pages; domain vilasoproperties.com.
+
+## Edit content
+Everything shown comes from `sample1/data.js`: projects, prices, area rates, amenities, phone numbers.
+Keep JS files ASCII-only (write ₹ as `₹`).
+
+**Prices, past rates and projections are illustrative** until Vilaso shares real figures. Projects with `sample: true` are made-up examples.
+
+## Run locally
+    python3 -m http.server 8080   # then open http://localhost:8080/sample1/
